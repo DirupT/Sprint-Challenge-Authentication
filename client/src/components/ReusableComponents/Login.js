@@ -113,3 +113,11 @@ export const StyledButton = styled(Button)`
         border-color: #3898F0;
     }
 `
+
+export const InvalidCredentials = styled.p`
+    color: rgb(237, 73, 86);
+    line-height: 18px;
+    font-size: 14px;
+    margin-top: 18px;
+    word-break: break-all;
+`

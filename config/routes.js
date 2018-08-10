@@ -37,7 +37,8 @@ function login(req, res) {
   db('users')
     .whereRaw('LOWER("username") = ?', credentials.username.toLowerCase()).first()
     .then(response => {
-      if (!response || !bcrypt.compareSync(credentials.password, response.password)) return res.status(401).json({ error: 'You shall not pass!' });
+      if (!response) return res.status(401).json({ error: "The username you entered doesn't belong to an account. Please check your username and try again." })
+      if (!bcrypt.compareSync(credentials.password, response.password)) return res.status(401).json({ error: 'Invalid password' });
       const token = generateToken(response);
       return res.send(token);
     })
