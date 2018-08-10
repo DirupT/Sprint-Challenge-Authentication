@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 class SignIn extends React.Component {
     constructor() {
@@ -14,12 +15,29 @@ class SignIn extends React.Component {
         this.setState({ [event.target.name]: event.target.value })
     }
 
+    login = () => {
+        if (this.state.username === '' || this.state.password === '') {
+            alert('Please enter a username and password!');
+            return;
+        }
+
+        const credentials = { username: this.state.username, password: this.state.password }
+
+        axios
+            .post('http://localhost:5000/api/login', credentials)
+            .then(response => {
+                localStorage.setItem('token', response.data);
+                this.props.history.push('/jokes');
+            })
+            .catch(err => console.log(err));
+    }
+
     render() {
         return (
-            <form>
+            <form onSubmit={event => event.preventDefault()}>
                 <input placeholder='Username' name='username' value={this.state.username} onChange={this.handleInput} type='text' />
                 <input placeholder='Password' name='password' value={this.state.password} onChange={this.handleInput} type='password' />
-                <button>Log in</button>
+                <button onClick={this.login}>Log in</button>
             </form>
         );
     }
