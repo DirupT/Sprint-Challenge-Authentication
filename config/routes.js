@@ -1,10 +1,12 @@
 const axios = require('axios');
+const bcrypt = require('bcryptjs');
+const db = require('../database/dbConfig');
 
-const { authenticate } = require('./middlewares');
+const { authenticate, postCheck, generateToken } = require('./middlewares');
 
 module.exports = server => {
   server.post('/api/register', register);
-  server.post('/api/login', login);
+  server.post('/api/login', postCheck, login);
   server.get('/api/jokes', authenticate, getJokes);
 };
 
@@ -13,7 +15,15 @@ function register(req, res) {
 }
 
 function login(req, res) {
-  // implement user login
+  const credentials = { username: req.username, password: req.password }
+  db('users')
+    .whereRaw('LOWER("username") = ?', credentials.username.toLowerCase()).first()
+    .then(response => {
+      if (!response || !bcrypt.compareSync(credentials.password, response.password)) return res.status(401).json({ error: 'You shall not pass!' });
+      const token = generateToken(response);
+      return res.send(token);
+    })
+    .catch(err => res.status(500).json({ error: "Couldn't save the user to the database." }))
 }
 
 function getJokes(req, res) {
