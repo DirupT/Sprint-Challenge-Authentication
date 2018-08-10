@@ -5,6 +5,7 @@ import { Route } from 'react-router-dom';
 import SignUp from './components/SignUp';
 import Jokes from './components/Jokes';
 import SignIn from './components/SignIn';
+import Nav from './components/Nav';
 
 class App extends Component {
   render() {
@@ -14,6 +15,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
+        <Route path='/' component={Nav} />
         <Route path='/jokes' component={Jokes} />
         <Route path='/signin' component={SignIn} />
         <Route path='/signup' component={SignUp} />

@@ -31,3 +31,15 @@
   border: 1px solid black;
   margin: 5px;
 }
+
+.nav-container {
+  display: flex;
+  justify-content: center;
+  border: 1px solid black;
+}
+
+.nav-container a {
+  margin: 5px 30px;
+  text-decoration: none;
+  color: black;
+}
