@@ -22,6 +22,7 @@ class SignUp extends React.Component {
     }
 
     register = () => {
+        // If username or password fields are empty then shown an alert and return
         if (this.state.username === '' || this.state.password === '') {
             alert('Please enter a username and password!');
             return;
@@ -29,14 +30,17 @@ class SignUp extends React.Component {
 
         const user = { username: this.state.username, password: this.state.password }
 
+        // Posts user to register api on server
         axios
             .post('http://localhost:5000/api/register', user)
             .then(response => {
+                // Adds token to local storage then redirects to the jokes component
                 localStorage.setItem('token', response.data.token);
                 this.props.history.push('/jokes');
             })
             .catch(err => {
                 if (!err || !err.response) return;
+                // Switches between error messages
                 switch (err.response.data.error) {
                     case "There is already a user with that name.":
                         return this.setState({ userExists: err.response.data.error });
@@ -67,6 +71,7 @@ class SignUp extends React.Component {
 
                     <StyledButton type='submit' onClick={this.register}>Sign Up</StyledButton>
 
+                    {/*If there is an existing user with that name then display error message*/}
                     {this.state.userExists.length > 0 ? <InvalidCredentials>{this.state.userExists}</InvalidCredentials> : null}
 
                     <ForgotForm>

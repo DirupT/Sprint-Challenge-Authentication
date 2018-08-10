@@ -22,6 +22,7 @@ function authenticate(req, res, next) {
 }
 
 function postCheck(req, res, next) {
+  // Middleware to check if username and password are being provided
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ errorMessage: "Please provide a username and password!" });
   req.username = username;
@@ -30,6 +31,7 @@ function postCheck(req, res, next) {
 }
 
 function generateToken(user) {
+  // Generates a token
   const payload = { userId: user.id };
   const options = { expiresIn: '1h' }
 

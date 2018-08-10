@@ -12,6 +12,7 @@ module.exports = server => {
 
 function register(req, res) {
   const user = { username: req.username, password: req.password }
+  // Checks if the username provided already exists in the database
   db('users')
     .then(response => {
       for (let i = 0; i < response.length; i++) {
@@ -19,8 +20,10 @@ function register(req, res) {
           return res.status(400).json({ error: 'There is already a user with that name.' })
         }
       }
+      // Hashes the user password with bcrypt then sets the hashed password onto user 
       const hash = bcrypt.hashSync(user.password, 14);
       user.password = hash;
+      // Inserts the hashed user into the database and returns the user / token
       db('users')
         .insert(user)
         .then(insertResponse => {
@@ -35,9 +38,12 @@ function login(req, res) {
   const credentials = { username: req.username, password: req.password }
 
   db('users')
+    // Looks for a user that is lowercased (case sensitive by default)
     .whereRaw('LOWER("username") = ?', credentials.username.toLowerCase()).first()
     .then(response => {
+      // If no user is found, returns an error
       if (!response) return res.status(401).json({ error: "The username you entered doesn't belong to an account. Please check your username and try again." })
+      // If the password provided doesn't match the one in the database, returns an error. 
       if (!bcrypt.compareSync(credentials.password, response.password)) return res.status(401).json({ error: 'Invalid password' });
       const token = generateToken(response);
       return res.send(token);

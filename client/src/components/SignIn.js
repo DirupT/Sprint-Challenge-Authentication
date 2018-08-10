@@ -23,6 +23,7 @@ class SignIn extends React.Component {
     }
 
     login = () => {
+        // If username or password fields are empty then shown an alert and return
         if (this.state.username === '' || this.state.password === '') {
             alert('Please enter a username and password!');
             return;
@@ -30,14 +31,17 @@ class SignIn extends React.Component {
 
         const credentials = { username: this.state.username, password: this.state.password }
 
+        // Posts credentials to login api on server
         axios
             .post('http://localhost:5000/api/login', credentials)
             .then(response => {
+                // Adds token to local storage then redirects to the jokes component
                 localStorage.setItem('token', response.data);
                 this.props.history.push('/jokes');
             })
             .catch(err => {
                 if (!err || !err.response.data) return;
+                // Switches between error messages
                 switch (err.response.data.error) {
                     case "The username you entered doesn't belong to an account. Please check your username and try again.":
                         return this.setState({ invalidUsername: err.response.data.error, invalidPassword: '' });
@@ -71,6 +75,7 @@ class SignIn extends React.Component {
 
                     <StyledButton type='submit' style={this.state.username.length > 0 || this.state.password.length > 0 ? { background: '#3897F0' } : { opacity: .3 }} onClick={this.login}>Log In</StyledButton>
 
+                    {/*If user provides incorrect username or password then display error to screen*/}
                     {this.state.invalidUsername.length > 0 ? <InvalidCredentials>{this.state.invalidUsername}</InvalidCredentials> : null}
                     {this.state.invalidPassword.length > 0 ? <InvalidCredentials>{this.state.invalidPassword}</InvalidCredentials> : null}
 
