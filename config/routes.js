@@ -5,17 +5,35 @@ const db = require('../database/dbConfig');
 const { authenticate, postCheck, generateToken } = require('./middlewares');
 
 module.exports = server => {
-  server.post('/api/register', register);
+  server.post('/api/register', postCheck, register);
   server.post('/api/login', postCheck, login);
   server.get('/api/jokes', authenticate, getJokes);
 };
 
 function register(req, res) {
-  // implement user registration
+  const user = { username: req.username, password: req.password }
+  db('users')
+    .then(response => {
+      for (let i = 0; i < response.length; i++) {
+        if (response[i].username.toLowerCase() === user.username.toLowerCase()) {
+          return res.status(400).json({ error: 'There is already a user with that name.' })
+        }
+      }
+      const hash = bcrypt.hashSync(user.password, 14);
+      user.password = hash;
+      db('users')
+        .insert(user)
+        .then(insertResponse => {
+          const token = generateToken({ id: insertResponse[0], ...user });
+          return res.status(201).json({ id: insertResponse[0], ...user, token });
+        })
+        .catch(err => res.status(500).json({ error: "Couldn't save the user to the database." }))
+    })
 }
 
 function login(req, res) {
   const credentials = { username: req.username, password: req.password }
+
   db('users')
     .whereRaw('LOWER("username") = ?', credentials.username.toLowerCase()).first()
     .then(response => {
