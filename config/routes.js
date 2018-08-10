@@ -50,7 +50,10 @@ function getJokes(req, res) {
       'https://08ad1pao69.execute-api.us-east-1.amazonaws.com/dev/random_ten'
     )
     .then(response => {
-      res.status(200).json(response.data);
+      db('users')
+        .where('id', req.decoded.userId).first()
+        .then(user => res.status(200).json({ user, jokes: response.data }))
+        .catch(err => res.status(500).json({ error: "Couldn't retrieve the user information", err }));
     })
     .catch(err => {
       res.status(500).json({ message: 'Error Fetching Jokes', error: err });

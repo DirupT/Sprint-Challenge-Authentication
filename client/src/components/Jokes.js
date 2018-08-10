@@ -8,8 +8,9 @@ class Jokes extends React.Component {
         super();
 
         this.state = {
-            loggedIn: true,
             jokes: [],
+            user: [],
+            loggedIn: true,
             time: 5
         }
     }
@@ -19,7 +20,7 @@ class Jokes extends React.Component {
         if (token) {
             axios
                 .get('http://localhost:5000/api/jokes', { headers: { Authorization: token } })
-                .then(response => this.setState({ jokes: response.data }))
+                .then(response => this.setState({ jokes: response.data.jokes, user: response.data.user }))
                 .catch(err => console.log(err.response));
         } else {
             this.setState({ loggedIn: false });
@@ -52,8 +53,13 @@ class Jokes extends React.Component {
             return <h3>You need to be logged in to view this page... Redirecting to login page in {this.state.time}</h3>
         }
 
+        if (this.state.user.length === 0) {
+            return <div>Loading...</div>
+        }
+
         return (
             <div>
+                <h1>Welcome, {this.state.user.username}</h1>
                 <button onClick={this.logout}>Logout</button>
                 {this.state.jokes.map((joke, index) => <Joke key={index} joke={joke} />)}
             </div>
