@@ -5,8 +5,8 @@ const Nav = () => {
     return (
         <div className='nav-container'>
             <Link to='/jokes'>Jokes</Link>
-            <Link to='/login'>Sign In</Link>
-            <Link to='/register'>Sign Up</Link>
+            <Link to='/signin'>Sign In</Link>
+            <Link to='/signup'>Sign Up</Link>
         </div>
     );
 }
