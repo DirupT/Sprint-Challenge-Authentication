@@ -5,7 +5,7 @@ import { Button, Form, FormGroup, Input } from 'reactstrap';
 export const LoginContainer = styled.div`
     max-width: 100%;
     width: 100vw;
-    height: 50vh;
+    height: 500px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -65,6 +65,14 @@ export const BottomText = styled.div`
 `
 
 export const SignUp = styled(Link)`
+    color: #3897f0;
+    &:hover {
+        text-decoration: none;
+        color: #3897f0;
+    }
+`
+
+export const SignIn = styled(Link)`
     color: #3897f0;
     &:hover {
         text-decoration: none;
