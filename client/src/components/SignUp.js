@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { FormGroup } from 'reactstrap';
 import {
-    LoginContainer, LoginForm, WordContainer, Word, ForgotPassword,
+    LoginContainer, LoginForm, WordContainer, Word, ForgotPassword, InvalidCredentials,
     ForgotForm, BottomLoginContent, BottomText, SignIn, StyledFormControl, StyledButton
 } from './ReusableComponents/Login';
 
@@ -12,7 +12,8 @@ class SignUp extends React.Component {
 
         this.state = {
             username: '',
-            password: ''
+            password: '',
+            userExists: ''
         }
     }
 
@@ -34,7 +35,16 @@ class SignUp extends React.Component {
                 localStorage.setItem('token', response.data.token);
                 this.props.history.push('/jokes');
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                if (!err || !err.response) return;
+                switch (err.response.data.error) {
+                    case "There is already a user with that name.":
+                        return this.setState({ userExists: err.response.data.error });
+
+                    default:
+                        return console.log(err.response);
+                }
+            });
     }
 
     render() {
@@ -56,6 +66,8 @@ class SignUp extends React.Component {
                     </FormGroup>
 
                     <StyledButton type='submit' onClick={this.register}>Sign Up</StyledButton>
+
+                    {this.state.userExists.length > 0 ? <InvalidCredentials>{this.state.userExists}</InvalidCredentials> : null}
 
                     <ForgotForm>
                         <ForgotPassword href='#_'>Forgot password?</ForgotPassword>
